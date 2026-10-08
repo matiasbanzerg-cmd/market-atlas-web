@@ -108,8 +108,7 @@
 
   /* ── Leyenda según la vista activa ──────────────────────────────────── */
   FU.clientLegend = () => u.raw(`<div class="legend-title">${u.esc(t('lg.clients'))}</div>
-    <div class="legend-row">${['A', 'B', 'C'].map((k) => `<span class="legend-item"><i class="sw dot ${k.toLowerCase()}"></i>${u.esc(t('tier.' + k))}</span>`).join('')}
-    <span class="legend-item"><i class="sw dot cl"></i>${u.esc(t('lg.cluster'))}</span></div>
+    <div class="legend-row">${['A', 'B', 'C'].map((k) => `<span class="legend-item"><i class="sw dot ${k.toLowerCase()}"></i>${u.esc(t('tier.' + k))}</span>`).join('')}</div>
     <div class="legend-row lg-2"><span class="legend-ramp"><span>${u.esc(t('lg.choro'))}</span><i></i></span><span class="legend-item"><i class="sw hatch"></i>${u.esc(t('lg.subsidiary'))}</span></div>`);
   TL.panel.renderLegend = function () {
     const v = TL.views.get(TL.state.view);

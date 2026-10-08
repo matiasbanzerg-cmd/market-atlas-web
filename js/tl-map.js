@@ -58,7 +58,7 @@
     try {
       map = new maplibregl.Map({
         container, style: TL.mapStyle.build(theme, M.enrichGeo()), center: [-30, 10], zoom: 0.6, pitch: 0, bearing: 0,
-        minZoom: 0.4, maxZoom: 19, maxPitch: 78, attributionControl: false, fadeDuration: 180, dragRotate: true, pitchWithRotate: true,
+        minZoom: 0.4, maxZoom: 13, maxPitch: 0, attributionControl: false, fadeDuration: 180, dragRotate: false, pitchWithRotate: false, touchPitch: false,   // globo fijo: solo se hace girar (sin inclinar ni rotar)
         // rendimiento: sin MSAA y con densidad de píxeles acotada (en pantallas 2x dibujar a 2x cuadruplica el trabajo de la GPU)
         canvasContextAttributes: { antialias: false }, pixelRatio: Math.min(window.devicePixelRatio || 1, 1.5),
         renderWorldCopies: false, cooperativeGestures: false, hash: false,
@@ -69,7 +69,7 @@
       return M.ready;
     }
     M.instance = map;
-    map.touchZoomRotate.enableRotation();
+    map.touchZoomRotate.disableRotation(); map.keyboard.disableRotation();
     map.on('error', (e) => {
       const msg = String(e?.error?.message || '');
       if (/Failed to fetch|NetworkError|AJAXError|Load failed/i.test(msg)) M.offline = true;

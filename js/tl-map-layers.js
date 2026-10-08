@@ -34,7 +34,7 @@
   M.addPointLayers = function () {
     const map = M.instance, p = pal(), D = TL.data;
     map.addSource('clients', {
-      type: 'geojson', data: { type: 'FeatureCollection', features: M.clientFeatures(M.visibleClients()) }, cluster: true, clusterRadius: 44, clusterMaxZoom: 9,
+      type: 'geojson', data: { type: 'FeatureCollection', features: M.clientFeatures(M.visibleClients()) }, cluster: false,   // cada empresa es un punto propio, también desde lejos (sin burbujas con números)
       clusterProperties: { a: ['+', ['case', ['==', ['get', 'tier'], 'A'], 1, 0]], b: ['+', ['case', ['==', ['get', 'tier'], 'B'], 1, 0]], s: ['+', ['get', 'sc']] },
     });
     map.addSource('reps', { type: 'geojson', data: repFeatures() });
