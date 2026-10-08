@@ -1,0 +1,250 @@
+/* ==========================================================================
+   tour.css — Modo presentación (TL.tour): captions grandes abajo a la izquierda,
+   barra de progreso por paso, marca arriba, controles que aparecen con el mouse.
+   Solo tokens: funciona en claro y en oscuro ("sala de control").
+   ========================================================================== */
+
+#tl-tour {
+  --tt-x: 56px;
+  --tt-y: 64px;
+  position: fixed; inset: 0; z-index: calc(var(--z-ficha) + 5);
+  pointer-events: none; color: var(--text); font-family: var(--font);
+  opacity: 0; transition: opacity 480ms var(--ease-out);
+}
+#tl-tour[hidden] { display: none; }
+#tl-tour.is-on { opacity: 1; }
+body.tt-idle, body.tt-idle * { cursor: none !important; }
+
+/* Velo de legibilidad: oscuridad (o niebla perla en claro) desde abajo a la izquierda */
+.tt-shade {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(120% 95% at 0% 100%, color-mix(in srgb, var(--bg) 94%, transparent) 0%, color-mix(in srgb, var(--bg) 78%, transparent) 26%, color-mix(in srgb, var(--bg) 34%, transparent) 46%, transparent 64%),
+    linear-gradient(to bottom, color-mix(in srgb, var(--bg) 66%, transparent) 0, transparent 120px);
+  transition: opacity 480ms var(--ease-out);
+}
+
+/* ── Progreso (arriba): un segmento por paso, el actual se llena con el tiempo ── */
+.tt-prog { position: absolute; top: 0; left: 0; right: 0; display: flex; gap: 3px; pointer-events: auto; }
+.tt-seg {
+  flex: 1; position: relative; height: 14px; padding: 0; margin: 0; border: 0; border-radius: 0;
+  background: none; cursor: pointer;
+}
+.tt-seg::before, .tt-seg i { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 2px; }
+.tt-seg::before { background: color-mix(in srgb, var(--text) 24%, transparent); transition: background var(--t-fast) var(--ease-out); }
+.tt-seg:hover::before { background: color-mix(in srgb, var(--text) 34%, transparent); }
+.tt-seg i { background: var(--accent); transform: scaleX(0); transform-origin: left center; box-shadow: var(--shadow-glow); }
+.tt-seg.is-done i { background: color-mix(in srgb, var(--text) 52%, transparent); box-shadow: none; }
+.tt-seg:focus-visible { outline-offset: -2px; }
+
+/* ── Marca (arriba izquierda) ─────────────────────────────────────────── */
+.tt-brand {
+  position: absolute; top: 26px; left: var(--tt-x); display: flex; align-items: center; gap: 12px;
+  font-size: 13px; letter-spacing: .02em; color: var(--text-2);
+}
+.tt-brand img { width: 26px; height: 26px; }
+.tt-brand b { font-weight: 700; color: var(--text); }
+.tt-brand span { padding-left: 12px; border-left: 1px solid var(--line-strong); line-height: 1; }
+
+/* ── Captions ─────────────────────────────────────────────────────────── */
+.tt-caps {
+  position: absolute; left: var(--tt-x); bottom: var(--tt-y);
+  width: min(700px, calc(100vw - var(--tt-x) * 2));
+  transition: width var(--t-panel) var(--ease-out);
+}
+.tt-cap { position: absolute; left: 0; right: 0; bottom: 0; pointer-events: auto; }
+.tt-cap.is-out { pointer-events: none; }
+
+.tt-laser {
+  position: absolute; left: 0; right: 0; top: -22px; height: 1px;
+  background: linear-gradient(90deg, transparent 0, var(--accent) 38%, var(--accent) 100%);
+  box-shadow: var(--shadow-glow); transform: scaleX(0); transform-origin: left center;
+}
+.tt-cap.is-in .tt-laser { animation: tt-sweep 1150ms var(--ease-in-out) 60ms both; }
+@keyframes tt-sweep {
+  0%   { transform: scaleX(0); transform-origin: left center; }
+  52%  { transform: scaleX(1); transform-origin: left center; }
+  53%  { transform: scaleX(1); transform-origin: right center; }
+  100% { transform: scaleX(0); transform-origin: right center; }
+}
+
+/* máscara: cada palabra sube desde abajo y se va hacia arriba */
+.tt-cap .tt-m { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: .1em; margin-bottom: -.1em; }
+.tt-cap .tt-m > span { display: inline-block; transform: translateY(108%); }
+.tt-cap.is-in .tt-m > span { transform: none; transition: transform 820ms var(--ease-out) calc(var(--i, 0) * 48ms); }
+.tt-cap.is-out .tt-m > span { transform: translateY(-108%); transition: transform 360ms cubic-bezier(.7, 0, .84, 0) calc(var(--i, 0) * 12ms); }
+
+.tt-cap .tt-r { opacity: 0; transform: translateY(12px); }
+.tt-cap.is-in .tt-r { opacity: 1; transform: none; transition: opacity 560ms var(--ease-out) calc(300ms + var(--i, 0) * 80ms), transform 700ms var(--ease-out) calc(300ms + var(--i, 0) * 80ms); }
+.tt-cap.is-out .tt-r { opacity: 0; transform: translateY(-8px); transition: opacity 240ms ease-in, transform 300ms ease-in; }
+.tt-cap.no-anim *, .tt-cap.no-anim .tt-m > span, .tt-cap.no-anim .tt-r { transition: none !important; animation: none !important; }
+
+.tt-kick { margin: 0; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--text-3); }
+.tt-kick .tt-m > span { display: inline-flex; align-items: center; gap: 0; }
+.tt-kick b { color: var(--text); font-weight: 600; letter-spacing: .06em; }
+.tt-kick em { font-style: normal; color: var(--text-4); margin-left: 6px; white-space: nowrap; }
+.tt-tick { display: inline-block; width: 22px; height: 1px; margin: 0 12px; background: var(--accent); box-shadow: var(--shadow-glow); }
+.tt-flag { display: inline-flex; margin-right: 9px; }
+
+.tt-title {
+  margin: 14px 0 0; font-size: clamp(40px, 3.9vw, 56px); line-height: 1.06; letter-spacing: -.022em;
+  text-wrap: balance; color: var(--text);
+}
+.tt-title .tt-sg-l { font-weight: 300; color: var(--text-2); }
+.tt-title .tt-sg-b { font-weight: 700; }
+.tt-subl { margin: 8px 0 0; font-size: 15px; color: var(--text-3); letter-spacing: .01em; }
+.tt-text { margin: 14px 0 0; max-width: 58ch; font-size: 17px; line-height: 1.5; color: var(--text-2); text-wrap: pretty; }
+
+.tt-lbl { display: block; font-size: 10.5px; font-weight: 500; letter-spacing: .13em; text-transform: uppercase; color: var(--text-3); }
+
+/* cifras clave */
+.tt-figs { display: flex; flex-wrap: wrap; margin-top: 24px; row-gap: 14px; }
+.tt-fig { padding: 0 28px 0 22px; border-left: 1px solid var(--line-strong); min-width: 0; }
+.tt-fig:first-child { padding-left: 0; border-left: 0; }
+.tt-fig b { font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 38px; font-weight: 400; line-height: 1; letter-spacing: -.03em; color: var(--text); }
+.tt-fig small { margin-left: 4px; font-size: 13px; color: var(--text-3); }
+.tt-fig .tt-lbl { margin-top: 9px; }
+.is-kpis .tt-fig { padding-right: 22px; padding-left: 18px; }
+.is-kpis .tt-fig:first-child { padding-left: 0; }
+.is-kpis .tt-fig b { font-size: 34px; }
+.is-kpis .tt-fig:nth-child(2) b { color: var(--text); box-shadow: inset 0 -3px 0 var(--accent); }
+
+/* listas: prospectos, proyectos, representantes */
+.tt-list { list-style: none; margin: 22px 0 0; padding: 0; max-width: 600px; }
+.tt-list li {
+  display: grid; grid-template-columns: 22px 20px minmax(0, auto) minmax(0, 1fr); align-items: center; gap: 0 10px;
+  padding: 6px 0; border-top: 1px solid color-mix(in srgb, var(--text) 12%, transparent); font-size: 14.5px;
+}
+.tt-list li:last-child { border-bottom: 1px solid color-mix(in srgb, var(--text) 12%, transparent); }
+.tt-cap.is-in .tt-list li { animation: tt-li 560ms var(--ease-out) both; }
+.tt-cap.is-in .tt-list li:nth-child(1) { animation-delay: 460ms; }
+.tt-cap.is-in .tt-list li:nth-child(2) { animation-delay: 500ms; }
+.tt-cap.is-in .tt-list li:nth-child(3) { animation-delay: 540ms; }
+.tt-cap.is-in .tt-list li:nth-child(4) { animation-delay: 580ms; }
+.tt-cap.is-in .tt-list li:nth-child(5) { animation-delay: 620ms; }
+@keyframes tt-li { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: none; } }
+.tt-idx { font-size: 11px; color: var(--text-4); }
+.tt-nm { font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tt-sub { font-size: 13px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tt-tier {
+  display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: var(--r-1);
+  font-family: var(--mono); font-size: 10.5px; font-weight: 600; background: var(--tier-c); color: var(--tier-c-ink);
+}
+.tt-tier[data-tier="A"] { background: var(--tier-a); color: var(--tier-a-ink); box-shadow: var(--shadow-glow); }
+.tt-tier[data-tier="B"] { background: var(--tier-b); color: var(--tier-b-ink); }
+
+.tt-cap-h { margin: 22px 0 0; }
+.tt-opps { margin-top: 10px; }
+.tt-opps li { grid-template-columns: 22px minmax(0, 1fr) auto; grid-template-areas: "f n a" "f s a"; row-gap: 1px; padding: 8px 0; }
+.tt-opps .tt-flag { grid-area: f; margin: 0; }
+.tt-opps .tt-nm { grid-area: n; }
+.tt-opps .tt-sub { grid-area: s; }
+.tt-opps .tt-amt { grid-area: a; font-size: 15px; font-weight: 500; color: var(--text); padding-left: 16px; }
+
+.tt-market { display: flex; align-items: baseline; gap: 12px; margin: 16px 0 0; max-width: 620px; font-size: 13.5px; line-height: 1.5; color: var(--text-2); }
+.tt-market .tt-lbl { flex: none; }
+
+/* competencia: barra 100 % por grupo de marca */
+.tt-bar { display: flex; gap: 2px; height: 6px; margin-top: 24px; max-width: 600px; }
+.tt-bar i { min-width: 3px; transform-origin: left center; }
+.tt-cap.is-in .tt-bar i { animation: tt-grow 900ms var(--ease-out) 520ms both; }
+@keyframes tt-grow { from { transform: scaleX(0); } to { transform: none; } }
+.tt-legend { display: flex; flex-wrap: wrap; gap: 6px 20px; list-style: none; margin: 12px 0 0; padding: 0; font-size: 13px; color: var(--text-2); }
+.tt-legend li { display: inline-flex; align-items: center; gap: 8px; }
+.tt-legend i { width: 8px; height: 8px; }
+.tt-legend .mono { color: var(--text-3); font-size: 12px; }
+
+/* representantes: Perú → Centroamérica */
+.tt-stops { display: flex; align-items: center; gap: 14px; margin-top: 20px; font-family: var(--mono); font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--text-3); }
+.tt-stops span { display: inline-flex; align-items: center; gap: 8px; padding-bottom: 5px; box-shadow: inset 0 -2px 0 transparent; transition: color var(--t-base) var(--ease-out), box-shadow var(--t-base) var(--ease-out); }
+.tt-stops span.on { color: var(--text); box-shadow: inset 0 -2px 0 var(--accent); }
+.tt-stops > i { width: 44px; height: 1px; background: var(--line-strong); }
+
+/* go-to-market: cuatro etapas */
+.tt-plan { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); list-style: none; margin: 28px 0 0; padding: 0; }
+.tt-plan li { position: relative; padding: 16px 20px 0 0; border-top: 1px solid var(--line-strong); }
+.tt-plan li::before {
+  content: ""; position: absolute; left: 0; top: -1px; width: 30px; height: 2px; background: var(--accent);
+  box-shadow: var(--shadow-glow); transform: scaleX(0); transform-origin: left center;
+}
+.tt-cap.is-in .tt-plan li::before { animation: tt-grow 600ms var(--ease-out) both; animation-delay: calc(560ms + var(--n) * 120ms); }
+.tt-plan .mono { font-size: 12px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--text); }
+.tt-plan p { margin: 8px 0 0; font-size: 14px; line-height: 1.45; color: var(--text-2); }
+.tt-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; margin-top: 28px; }
+.tt-author { display: flex; align-items: center; gap: 12px; margin: 22px 0 0; font-size: 14px; color: var(--text-2); }
+.tt-cta .tt-author { margin: 0; }
+.tt-author i { width: 26px; height: 1px; background: var(--accent); }
+.tt-author .mono { font-size: 12px; color: var(--text-3); text-transform: uppercase; letter-spacing: .1em; }
+
+/* portada y cierre: tipografía de cartel */
+.is-cover .tt-sg, .is-gtm .tt-sg { display: block; }
+.is-cover .tt-title { font-size: clamp(52px, 5.6vw, 84px); line-height: 1; letter-spacing: -.03em; }
+.is-cover .tt-text { font-size: 18px; max-width: 52ch; margin-top: 20px; }
+.is-gtm .tt-title .tt-sg-l { font-size: clamp(22px, 1.9vw, 28px); letter-spacing: -.01em; margin-bottom: 6px; }
+.is-gtm .tt-title .tt-sg-b { font-size: clamp(52px, 5.4vw, 80px); line-height: 1; letter-spacing: -.03em; }
+.is-gtm { width: min(860px, calc(100vw - var(--tt-x) * 2)); }
+
+/* ── Controles (abajo derecha): aparecen al mover el mouse ────────────── */
+.tt-ctrl {
+  position: absolute; right: 32px; bottom: 32px; display: flex; align-items: center; gap: 2px; padding: 4px;
+  background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-2);
+  opacity: 0; transform: translateY(8px); pointer-events: none;
+  transition: opacity 280ms var(--ease-out), transform 360ms var(--ease-out), right var(--t-panel) var(--ease-out);
+}
+#tl-tour.is-awake .tt-ctrl, .tt-ctrl:focus-within, #tl-tour.is-paused .tt-ctrl { opacity: 1; transform: none; pointer-events: auto; }
+.tt-state { min-width: 74px; padding: 0 12px 0 10px; font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--text-3); white-space: nowrap; }
+#tl-tour.is-paused .tt-state { color: var(--text); }
+.tt-btn {
+  display: inline-grid; place-items: center; grid-auto-flow: column; gap: 6px; min-width: 40px; height: 40px; padding: 0 10px;
+  border: 0; border-radius: 0; background: transparent; color: var(--text); cursor: pointer;
+  transition: background var(--t-fast) var(--ease-out), color var(--t-fast) var(--ease-out);
+}
+.tt-btn:hover { background: var(--surface-3); }
+.tt-btn:disabled { color: var(--text-4); background: transparent; cursor: default; }
+.tt-btn .ico { width: 18px; height: 18px; }
+.tt-play { background: var(--accent); color: var(--on-accent); }
+.tt-play:hover { background: var(--accent-hover); }
+.tt-exit kbd { font-size: 10px; padding: 2px 5px; border: 1px solid var(--line-strong); border-radius: var(--r-1); color: var(--text-3); }
+.tt-sep { width: 1px; height: 22px; margin: 0 4px; background: var(--line); }
+.tt-hint { position: absolute; right: 0; bottom: calc(100% + 10px); margin: 0; font-size: 11px; letter-spacing: .06em; color: var(--text-3); white-space: nowrap; }
+
+/* ── Paso con ficha abierta: el caption se corre a la izquierda de la ficha ── */
+#tl-tour.is-ficha .tt-caps { width: min(560px, calc(100vw - var(--ficha-w) - var(--gap) * 2 - var(--tt-x) - 40px)); }
+#tl-tour.is-ficha .tt-title { font-size: clamp(32px, 3vw, 46px); }
+#tl-tour.is-ficha .tt-ctrl { right: calc(var(--ficha-w) + var(--gap) * 2 + 20px); }
+#tl-tour.is-ficha .tt-shade { background: radial-gradient(95% 100% at 0% 100%, color-mix(in srgb, var(--bg) 96%, transparent) 0%, color-mix(in srgb, var(--bg) 86%, transparent) 30%, color-mix(in srgb, var(--bg) 40%, transparent) 50%, transparent 66%), linear-gradient(to bottom, color-mix(in srgb, var(--bg) 66%, transparent) 0, transparent 120px); }
+
+/* ── Responsive ───────────────────────────────────────────────────────── */
+@media (max-width: 1100px) {
+  #tl-tour { --tt-x: 28px; --tt-y: 40px; }
+  .tt-ctrl { top: 46px; bottom: auto; right: 20px; }
+  .tt-hint { display: none; }
+  #tl-tour.is-ficha .tt-ctrl { right: 20px; }
+  #tl-tour.is-ficha .tt-caps { top: 72px; bottom: auto; width: calc(100vw - var(--tt-x) * 2); }
+  #tl-tour.is-ficha .tt-cap { bottom: auto; top: 0; }
+  #tl-tour.is-ficha .tt-text, #tl-tour.is-ficha .tt-figs { display: none; }
+}
+@media (max-width: 640px) {
+  #tl-tour { --tt-x: 16px; --tt-y: 24px; }
+  .tt-brand span { display: none; }
+  .tt-tick { width: 14px; margin: 0 8px; }
+  .tt-kick { font-size: 11px; letter-spacing: .1em; }
+  .tt-title { font-size: 32px; }
+  .is-cover .tt-title, .is-gtm .tt-title .tt-sg-b { font-size: 44px; }
+  .tt-text, .is-cover .tt-text { font-size: 15px; }
+  .tt-fig b, .is-kpis .tt-fig b { font-size: 26px; }
+  .is-kpis .tt-fig { padding: 0 14px 0 12px; }
+  .tt-list .tt-sub { display: none; }
+  .tt-list li { grid-template-columns: 22px 20px minmax(0, 1fr); }
+  .tt-opps li { grid-template-columns: 22px minmax(0, 1fr) auto; }
+  .tt-plan { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 16px; }
+  .tt-state { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #tl-tour, .tt-ctrl { transition: opacity 160ms linear; }
+  .tt-cap .tt-m > span, .tt-cap.is-in .tt-m > span, .tt-cap.is-out .tt-m > span { transform: none; transition: none; }
+  .tt-cap .tt-r, .tt-cap.is-in .tt-r, .tt-cap.is-out .tt-r { transform: none; transition: opacity 200ms linear; }
+  .tt-cap.is-in .tt-laser, .tt-cap.is-in .tt-list li, .tt-cap.is-in .tt-bar i, .tt-cap.is-in .tt-plan li::before { animation: none; }
+  .tt-plan li::before { transform: none; }
+}

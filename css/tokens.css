@@ -1,0 +1,180 @@
+/* ==========================================================================
+   TRUMPF · Market Atlas LATAM — design tokens
+   Fuente: research/brand/brand.json (paleta real de trumpf.com).
+   Claro = tema por defecto · [data-theme="dark"] = "sala de control".
+   Los módulos nunca hardcodean colores: usan estas variables.
+   ========================================================================== */
+
+:root {
+  color-scheme: light;
+
+  /* ── Marca (constantes entre temas) ───────────────────────────────── */
+  --ink: #131313;
+  --lime: #BBD03A;
+  --lime-soft: #DAE593;
+  --lime-dark: #8B9C2A;
+  --steel: #285172;
+  --steel-dark: #03496C;
+  --steel-deep: #142B3D;
+  --steel-mid: #4F708B;
+  --steel-light: #899FB2;
+  --steel-pale: #C9D3DC;
+  --amber: #FF9600;
+  --signal-red: #DD0000;
+
+  /* ── Superficies ──────────────────────────────────────────────────── */
+  --bg: #EFF0F4;                    /* fuera del globo */
+  --bg-2: #E4E7EC;
+  --surface: #FCFDFE;               /* paneles, tarjetas */
+  --surface-2: #F4F6F8;             /* bloques secundarios */
+  --surface-3: #EAEDF2;             /* hover, pistas de barras */
+  --surface-inv: #131313;           /* superficie invertida (tooltips, hovercard header) */
+  --scrim: rgba(19, 19, 19, .38);
+  --line: #E1E4E9;                  /* hairline 1px */
+  --line-strong: #C7CDD5;
+
+  /* ── Texto ────────────────────────────────────────────────────────── */
+  --text: #131313;
+  --text-2: #3F454D;
+  --text-3: #6B7078;                /* secundario (AA sobre superficie) */
+  --text-4: #9AA0A8;                /* deshabilitado / decorativo */
+  --text-inv: #F2F5F7;
+  --link: #285172;
+
+  /* ── Acento de marca: la "luz de corte" ───────────────────────────── */
+  --accent: #BBD03A;
+  --accent-hover: #C8DB55;
+  --accent-press: #A9BD2E;
+  --on-accent: #131313;
+  --focus-in: #BBD03A;
+  --focus-out: #131313;
+
+  /* ── Datos ────────────────────────────────────────────────────────── */
+  --tier-a: #BBD03A;  --tier-a-line: #131313;  --tier-a-ink: #131313;
+  --tier-b: #285172;  --tier-b-line: #FCFDFE;  --tier-b-ink: #FFFFFF;
+  --tier-c: #899FB2;  --tier-c-line: #FCFDFE;  --tier-c-ink: #131313;
+  --rep: #131313;
+  --rep-short: #BBD03A;
+  --opp: #FF9600;
+  --good: #4C7A1E;
+  --warn: #B86B00;
+  --bad: #C40000;
+  --info: #285172;
+
+  /* Rampa coroplética (de menos a más clientes) */
+  --ramp-0: #E7ECF0;
+  --ramp-1: #C9D3DC;
+  --ramp-2: #899FB2;
+  --ramp-3: #4F708B;
+  --ramp-4: #285172;
+  --ramp-5: #03496C;
+
+  /* ── Forma ────────────────────────────────────────────────────────── */
+  --r-0: 0;
+  --r-1: 2px;                       /* inputs, chips, controles chicos */
+  --r-2: 3px;
+  --hair: 1px;
+
+  /* ── Sombras: amplias y suaves, nunca duras ───────────────────────── */
+  --shadow-1: 0 1px 2px rgba(19, 19, 19, .06), 0 4px 14px rgba(19, 19, 19, .05);
+  --shadow-2: 0 7px 22px rgba(19, 19, 19, .08), 0 1px 3px rgba(19, 19, 19, .06);
+  --shadow-3: 0 20px 50px -15px rgba(0, 0, 0, .28), 0 4px 12px rgba(19, 19, 19, .08);
+  --shadow-glow: 0 0 0 rgba(0, 0, 0, 0);
+
+  /* ── Tipografía ───────────────────────────────────────────────────── */
+  --font: "Hind", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
+  --fs-2xs: 10.5px;
+  --fs-xs: 12px;
+  --fs-sm: 13px;
+  --fs-md: 14.5px;
+  --fs-lg: 17px;
+  --fs-xl: 21px;
+  --fs-2xl: 28px;
+  --fs-3xl: 40px;
+
+  /* ── Movimiento ───────────────────────────────────────────────────── */
+  --ease-out: cubic-bezier(.23, 1, .32, 1);
+  --ease-in-out: cubic-bezier(.77, 0, .175, 1);
+  --ease-drawer: cubic-bezier(.32, .72, 0, 1);
+  --t-fast: 160ms;
+  --t-base: 220ms;
+  --t-panel: 420ms;
+
+  /* ── Geometría del layout ─────────────────────────────────────────── */
+  --gap: 12px;
+  --header-h: 56px;
+  --rail-w: 52px;
+  --panel-w: 420px;
+  --ficha-w: 780px;
+  --panel-top: calc(var(--header-h) + var(--gap) * 2);
+
+  /* ── Capas ────────────────────────────────────────────────────────── */
+  --z-map: 0;
+  --z-chrome: 10;
+  --z-panel: 20;
+  --z-overlay: 50;
+  --z-ficha: 40;
+  --z-palette: 60;
+  --z-modal: 70;
+  --z-toast: 80;
+  --z-loader: 100;
+
+  /* ── Mapa (el JS lee estos valores para pintar el estilo) ─────────── */
+  --map-sky-a: #E6E9EF;
+  --map-sky-b: #F7F8FA;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: #0B0F14;
+  --bg-2: #05080C;
+  --surface: #121820;
+  --surface-2: #18212B;
+  --surface-3: #1F2A36;
+  --surface-inv: #EEF2F5;
+  --scrim: rgba(3, 6, 9, .62);
+  --line: #243241;
+  --line-strong: #33465A;
+
+  --text: #EEF2F5;
+  --text-2: #C3CED8;
+  --text-3: #8FA3B5;
+  --text-4: #5E7184;
+  --text-inv: #131313;
+  --link: #8FB6D6;
+
+  --accent: #C6DB48;
+  --accent-hover: #D4E766;
+  --accent-press: #B3C73B;
+  --on-accent: #131313;
+  --focus-in: #131313;
+  --focus-out: #C6DB48;
+
+  --tier-a: #C6DB48;  --tier-a-line: #0B0F14;  --tier-a-ink: #131313;
+  --tier-b: #4C86B8;  --tier-b-line: #0B0F14;  --tier-b-ink: #FFFFFF;
+  --tier-c: #8FA3B5;  --tier-c-line: #0B0F14;  --tier-c-ink: #131313;
+  --rep: #EEF2F5;
+  --rep-short: #C6DB48;
+  --opp: #FFA21F;
+  --good: #A8C93A;
+  --warn: #FFB04D;
+  --bad: #FF6B5E;
+  --info: #7FB1D8;
+
+  --ramp-0: #121C27;
+  --ramp-1: #1B3347;
+  --ramp-2: #285172;
+  --ramp-3: #3F76A0;
+  --ramp-4: #5C8DB5;
+  --ramp-5: #8DBBE0;
+
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, .35), 0 4px 14px rgba(0, 0, 0, .25);
+  --shadow-2: 0 8px 26px rgba(0, 0, 0, .42), 0 1px 3px rgba(0, 0, 0, .4);
+  --shadow-3: 0 24px 60px -16px rgba(0, 0, 0, .7), 0 4px 14px rgba(0, 0, 0, .4);
+  --shadow-glow: 0 0 18px rgba(198, 219, 72, .22);
+
+  --map-sky-a: #05080C;
+  --map-sky-b: #0B0F14;
+}
