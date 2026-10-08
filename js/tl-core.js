@@ -242,7 +242,7 @@
     panelOpen: true,
     present: false,
     colorMode: 'tier',        // 'tier' | 'competition'
-    satellite: false,
+    satellite: true,
     buildings3d: false,
     introDone: false,
   };

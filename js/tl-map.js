@@ -81,6 +81,7 @@
         M.addPointLayers();
         M.bindInteractions();
         M.applyPadding0();
+        M.setSatellite(true);   // vista por defecto: globo satelital (el botón permite volver al mapa vectorial)
         document.body.classList.add('map-ready');
         TL.emit('map:ready');
         resolveReady(M);
