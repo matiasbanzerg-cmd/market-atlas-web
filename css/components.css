@@ -369,3 +369,4 @@ body.no-map #tl-stage { background: radial-gradient(80% 70% at 50% 45%, var(--ma
   #tl-stage, .chrome, #tl-loader, #tl-intro, .hovercard, .tooltip, .toasts { display: none !important; }
 }
 body.overlay-open #tl-stage { visibility: hidden; }
+.hovercard .hc-desc { margin: 0; padding: 0 14px 10px; font-size: 12.5px; line-height: 1.4; color: var(--text-2); max-width: 300px; }

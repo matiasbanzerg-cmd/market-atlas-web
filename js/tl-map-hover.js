@@ -9,7 +9,7 @@
   const html = u.html, raw = u.raw;
 
   let cardEl, tipEl, cardQX, cardQY, tipQX, tipQY;
-  let hoverCc = null, hoverKey = '', cardShown = false, tipShown = false, hideT = 0;
+  let hoverCc = null, hoverKey = '', cardShown = false, tipShown = false, hideT = 0, oppHover = null;
 
   /** Capas con las que se puede interactuar según el modo actual. */
   M.interactiveLayers = function () {
@@ -33,8 +33,9 @@
     map.on('click', onClick);
     map.on('dragstart', () => { M.spin(false); hideCard(); hideTip(); });
     TL.on('map:hover', (h) => {   // marcadores DOM (oportunidades)
-      if (!h) return hideCard();
+      if (!h) { oppHover = null; return hideCard(); }
       const o = TL.data.opp(h.id); if (!o) return;
+      oppHover = h.id; hideTip(); setCountryHover(null); M.setHover?.(null);
       showCard('opp:' + h.id, cardOpp(o), h.x, h.y);
     });
   };
@@ -42,6 +43,8 @@
   function onMove(e) {
     const map = M.instance;
     if (!map || map.isMoving() && M.isSpinning()) return;
+    // sobre un rombo de oportunidad (marcador DOM) el mapa también recibe mousemove: la tarjeta sigue al mouse en vez de cerrarse
+    if (oppHover) { const o = TL.data.opp(oppHover); if (o) showCard('opp:' + oppHover, cardOpp(o), e.originalEvent.clientX, e.originalEvent.clientY); return; }
     const hits = map.queryRenderedFeatures(e.point, { layers: M.interactiveLayers() });
     const canvas = map.getCanvas();
     if (hits.length) {
@@ -183,7 +186,17 @@
   function cardOpp(o) {
     return String(html`<div class="hc-top"><div class="hc-opp-ico">${TL.ui.icon('radar')}</div>
       <div class="hc-id"><b class="hc-name">${TL.i18n.pick(o, 'title')}</b><span class="hc-place">${TL.ui.flag(o.country, 15)}${[o.city, TL.data.countryName(o.country)].filter(Boolean).join(' · ')}</span></div></div>
-      <div class="hc-chips">${o.amount_usd ? raw(`<span class="chip chip-amber num">${TL.i18n.usd(o.amount_usd)}</span>`) : ''}${o.status ? raw(`<span class="chip">${u.esc(o.status)}</span>`) : ''}${o.sector ? raw(`<span class="chip">${u.esc(TL.data.sectorName(o.sector))}</span>`) : ''}</div>`);
+      <div class="hc-chips">${o.amount_usd ? raw(`<span class="chip chip-amber num">${TL.i18n.usd(o.amount_usd)}</span>`) : ''}${o.status ? raw(`<span class="chip">${u.esc(oppStatus(o.status))}</span>`) : ''}${o.date ? raw(`<span class="chip num">${u.esc(String(o.date).slice(0, 7))}</span>`) : ''}</div>
+      ${desc(o) ? raw(`<p class="hc-desc">${u.esc(desc(o))}</p>`) : ''}
+      <div class="hc-foot"><span>${TL.state.lang === 'de' ? 'Klicken: im Radar öffnen' : 'Clic: ver en el radar'}</span>${TL.ui.icon('next')}</div>`);
+  }
+  function oppStatus(s) {
+    const m = { anunciado: ['Anunciado', 'Angekündigt'], licitacion: ['En licitación', 'Ausschreibung'], adjudicado: ['Adjudicado', 'Vergeben'], en_construccion: ['En construcción', 'Im Bau'], operativo: ['Operativo', 'In Betrieb'] }[String(s).toLowerCase()];
+    return m ? m[TL.state.lang === 'de' ? 1 : 0] : s;
+  }
+  function desc(o) {
+    const d = String(TL.i18n.pick(o, 'description') || '').trim();
+    return d.length > 190 ? d.slice(0, 187).replace(/\s+\S*$/, '') + '…' : d;
   }
   function cardDealer(pr) {
     const g = TL.data.group(TL.data.groupOfBrand(pr.brand));
